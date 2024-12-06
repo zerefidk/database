@@ -1,12 +1,24 @@
-const entityData = {
-    employees: {
-        name: "Employees Table",
-        description: `
-            The Employees table stores all employee information such as name, gender, date of birth, 
-            contact information, department, position, salary, and employment status.
-        `,
-        code: `
-CREATE TABLE employees (
+// JavaScript
+
+// Function to open a modal
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+// Function to close a modal
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Function to show the SQL for a selected section
+function showSQL(section) {
+    const sqlCodeElement = document.getElementById('sqlCode');
+    let sqlCode = '';
+
+    switch (section) {
+        case 'employees':
+            sqlCode = `
+                CREATE TABLE employees (
     employee_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -18,18 +30,12 @@ CREATE TABLE employees (
     department VARCHAR(100),
     position VARCHAR(100),
     salary DECIMAL(10, 2),
-    status ENUM('active', 'inactive') DEFAULT 'active'
-);
-        `
-    },
-    payroll: {
-        name: "Payroll Table",
-        description: `
-            The Payroll table tracks payment details for employees, including basic salary, bonuses, 
-            deductions, and the calculated net salary.
-        `,
-        code: `
-CREATE TABLE payroll (
+    status ENUM('active', 'inactive') DEFAULT 'active');
+            `;
+            break;
+        case 'payroll':
+            sqlCode = `
+                CREATE TABLE payroll (
     payroll_id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT,
     pay_date DATE,
@@ -38,84 +44,151 @@ CREATE TABLE payroll (
     deductions DECIMAL(10, 2),
     gross_salary DECIMAL(10, 2),
     net_salary DECIMAL(10, 2),
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
-);
-        `
-    },
-    deductions: {
-        name: "Deductions Table",
-        description: `
-            The Deductions table records specific deductions made for each employee, such as tax, 
-            insurance, or other fees.
-        `,
-        code: `
-CREATE TABLE deductions (
-    deduction_id INT PRIMARY KEY AUTO_INCREMENT,
-    employee_id INT,
-    deduction_type VARCHAR(100),
-    amount DECIMAL(10, 2),
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
-);
-        `
-    },
-    attendance: {
-        name: "Attendance Table",
-        description: `
-            The Attendance table tracks daily employee attendance, including statuses such as present, 
-            absent, sick, or on vacation.
-        `,
-        code: `
-CREATE TABLE attendance (
-    attendance_id INT PRIMARY KEY AUTO_INCREMENT,
-    employee_id INT,
-    date DATE,
-    status ENUM('present', 'absent', 'sick', 'vacation'),
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
-);
-        `
-    },
-    leaves: {
-        name: "Leaves Table",
-        description: `
-            The Leaves table manages employee leave requests, including types of leave, start and end dates, 
-            and approval status.
-        `,
-        code: `
-CREATE TABLE leaves (
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id));
+            `;
+            break;
+        case 'leaves':
+            sqlCode = `
+                CREATE TABLE leaves (
     leave_id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT,
     leave_type VARCHAR(50),
     start_date DATE,
     end_date DATE,
     status ENUM('approved', 'pending', 'rejected'),
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
-);
-        `
-    }
-};
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id));
+            `;
+            break;
+        case 'deductions':
+            sqlCode = `
+                CREATE TABLE deductions (
+    deduction_id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT,
+    deduction_type VARCHAR(100),
+    amount DECIMAL(10, 2),
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id));
+            `;
+            break;
+        case 'attendance':
+            sqlCode = `
+                CREATE TABLE attendance (
+    attendance_id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT,
+    date DATE,
+    status ENUM('present', 'absent', 'sick', 'vacation'),
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id));
 
-function showEntity(entity) {
-    const entityInfo = document.getElementById("entity-info");
-    const dbCode = document.getElementById("db-code");
-
-    if (entityData[entity]) {
-        const { name, description, code } = entityData[entity];
-        entityInfo.innerHTML = `
-            <h2>${name}</h2>
-            <p>${description}</p>
-            <button onclick="showCode('${entity}')">Show DB Code</button>
-        `;
-        dbCode.innerHTML = ""; // Clear the code display initially
+            `;
+            break;
+        default:
+            sqlCode = 'No SQL found for this section.';
     }
+
+    // Display the SQL code in the SQL code div
+    sqlCodeElement.innerHTML = `
+        <pre>${sqlCode}</pre>
+    `;
 }
 
-function showCode(entity) {
-    const dbCode = document.getElementById("db-code");
+// Add Employee function
+function addEmployee(event) {
+    event.preventDefault();
 
-    if (entityData[entity]) {
-        dbCode.innerHTML = `
-            <h2>${entityData[entity].name} Code</h2>
-            <pre>${entityData[entity].code}</pre>
-        `;
-    }
+    const firstName = document.getElementById('empFirstName').value;
+    const lastName = document.getElementById('empLastName').value;
+    const department = document.getElementById('empDepartment').value;
+    const position = document.getElementById('empPosition').value;
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>1</td>
+        <td>${firstName}</td>
+        <td>${lastName}</td>
+        <td>${department}</td>
+        <td>${position}</td>
+        <td>Active</td>
+    `;
+    document.getElementById('employeeTableBody').appendChild(newRow);
+    closeModal('addEmployeeModal');
+}
+
+// Add Payroll function
+function addPayroll(event) {
+    event.preventDefault();
+
+    const employeeId = document.getElementById('payrollEmployeeId').value;
+    const payDate = document.getElementById('payrollPayDate').value;
+    const grossSalary = document.getElementById('payrollGrossSalary').value;
+    const netSalary = document.getElementById('payrollNetSalary').value;
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>1</td>
+        <td>${employeeId}</td>
+        <td>${payDate}</td>
+        <td>${grossSalary}</td>
+        <td>${netSalary}</td>
+    `;
+    document.getElementById('payrollTableBody').appendChild(newRow);
+    closeModal('addPayrollModal');
+}
+
+// Add Leave function
+function addLeave(event) {
+    event.preventDefault();
+
+    const employeeId = document.getElementById('leaveEmployeeId').value;
+    const leaveType = document.getElementById('leaveType').value;
+    const startDate = document.getElementById('leaveStartDate').value;
+    const endDate = document.getElementById('leaveEndDate').value;
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>1</td>
+        <td>${employeeId}</td>
+        <td>${leaveType}</td>
+        <td>${startDate}</td>
+        <td>${endDate}</td>
+        <td>Approved</td>
+    `;
+    document.getElementById('leaveTableBody').appendChild(newRow);
+    closeModal('addLeaveModal');
+}
+
+// Add Deduction function
+function addDeduction(event) {
+    event.preventDefault();
+
+    const employeeId = document.getElementById('deductionEmployeeId').value;
+    const deductionType = document.getElementById('deductionType').value;
+    const amount = document.getElementById('deductionAmount').value;
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>1</td>
+        <td>${employeeId}</td>
+        <td>${deductionType}</td>
+        <td>${amount}</td>
+    `;
+    document.getElementById('deductionTableBody').appendChild(newRow);
+    closeModal('addDeductionModal');
+}
+
+// Add Attendance function
+function addAttendance(event) {
+    event.preventDefault();
+
+    const employeeId = document.getElementById('attendanceEmployeeId').value;
+    const date = document.getElementById('attendanceDate').value;
+    const status = document.getElementById('attendanceStatus').value;
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>1</td>
+        <td>${employeeId}</td>
+        <td>${date}</td>
+        <td>${status}</td>
+    `;
+    document.getElementById('attendanceTableBody').appendChild(newRow);
+    closeModal('addAttendanceModal');
 }
