@@ -3,33 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payroll System DB Demo</title>
+    <title>Group 3 Payroll System</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Payroll System Database Group 3 Demo</h1>
-        </header>
+    <header>
+        <h1>Group 3 Payroll System</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="javascript:void(0);" onclick="showSQL('employees')">Employees</a></li>
+            <li><a href="javascript:void(0);" onclick="showSQL('payroll')">Payroll</a></li>
+            <li><a href="javascript:void(0);" onclick="showSQL('leaves')">Leaves</a></li>
+            <li><a href="javascript:void(0);" onclick="showSQL('deductions')">Deductions</a></li>
+            <li><a href="javascript:void(0);" onclick="showSQL('attendance')">Attendance</a></li>
+        </ul>
+    </nav>
+    <main>
+        <div id="sqlCode" class="sql-code">
+            <!-- SQL code will be dynamically displayed here -->
+        </div>
 
-        <main>
-            <div class="entity-buttons">
-                <button onclick="showEntity('employees')">Employee</button>
-                <button onclick="showEntity('payroll')">Payroll</button>
-                <button onclick="showEntity('deductions')">Deductions</button>
-                <button onclick="showEntity('attendance')">Attendance</button>
-                <button onclick="showEntity('leaves')">Leaves</button>
-            </div>
+        <!-- Employees Section -->
+        <section id="employees">
+            <h2>Employees</h2>
+            <button class="action-btn" onclick="openModal('addEmployeeModal')">Add Employee</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    <!-- Employee rows will appear here -->
+                </tbody>
+            </table>
+        </section>
 
-            <div id="entity-info" class="entity-info">
-                <h2>Click on an entity above to see its details.</h2>
+        <!-- Add Employee Modal -->
+        <div id="addEmployeeModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addEmployeeModal')">&times;</span>
+                <h3>Add Employee</h3>
+                <form id="addEmployeeForm" onsubmit="addEmployee(event)">
+                    <label for="empFirstName">First Name:</label>
+                    <input type="text" id="empFirstName" required>
+                    <label for="empLastName">Last Name:</label>
+                    <input type="text" id="empLastName" required>
+                    <label for="empDepartment">Department:</label>
+                    <input type="text" id="empDepartment" required>
+                    <label for="empPosition">Position:</label>
+                    <input type="text" id="empPosition" required>
+                    <button type="submit">Add Employee</button>
+                </form>
             </div>
+        </div>
 
-            <div id="db-code" class="db-code">
-                <!-- The DB code will appear here when "Show DB Code" is clicked -->
+        <!-- Payroll Section -->
+        <section id="payroll">
+            <h2>Payroll</h2>
+            <button class="action-btn" onclick="openModal('addPayrollModal')">Generate Payroll</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Payroll ID</th>
+                        <th>Employee ID</th>
+                        <th>Pay Date</th>
+                        <th>Gross Salary</th>
+                        <th>Net Salary</th>
+                    </tr>
+                </thead>
+                <tbody id="payrollTableBody">
+                    <!-- Payroll rows -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Add Payroll Modal -->
+        <div id="addPayrollModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addPayrollModal')">&times;</span>
+                <h3>Generate Payroll</h3>
+                <form onsubmit="addPayroll(event)">
+                    <label for="payrollEmployeeId">Employee ID:</label>
+                    <input type="text" id="payrollEmployeeId" required>
+                    <label for="payrollPayDate">Pay Date:</label>
+                    <input type="date" id="payrollPayDate" required>
+                    <label for="payrollGrossSalary">Gross Salary:</label>
+                    <input type="number" id="payrollGrossSalary" required>
+                    <label for="payrollNetSalary">Net Salary:</label>
+                    <input type="number" id="payrollNetSalary" required>
+                    <button type="submit">Generate Payroll</button>
+                </form>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <!-- Leaves Section -->
+        <section id="leaves">
+            <h2>Leaves</h2>
+            <button class="action-btn" onclick="openModal('addLeaveModal')">Add Leave Record</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Leave ID</th>
+                        <th>Employee ID</th>
+                        <th>Leave Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="leaveTableBody">
+                    <!-- Leave rows -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Add Leave Modal -->
+        <div id="addLeaveModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addLeaveModal')">&times;</span>
+                <h3>Add Leave</h3>
+                <form onsubmit="addLeave(event)">
+                    <label for="leaveEmployeeId">Employee ID:</label>
+                    <input type="text" id="leaveEmployeeId" required>
+                    <label for="leaveType">Leave Type:</label>
+                    <input type="text" id="leaveType" required>
+                    <label for="leaveStartDate">Start Date:</label>
+                    <input type="date" id="leaveStartDate" required>
+                    <label for="leaveEndDate">End Date:</label>
+                    <input type="date" id="leaveEndDate" required>
+                    <button type="submit">Add Leave</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Deductions Section -->
+        <section id="deductions">
+            <h2>Deductions</h2>
+            <button class="action-btn" onclick="openModal('addDeductionModal')">Add Deduction</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Deduction ID</th>
+                        <th>Employee ID</th>
+                        <th>Deduction Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="deductionTableBody">
+                    <!-- Deduction rows -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Add Deduction Modal -->
+        <div id="addDeductionModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addDeductionModal')">&times;</span>
+                <h3>Add Deduction</h3>
+                <form onsubmit="addDeduction(event)">
+                    <label for="deductionEmployeeId">Employee ID:</label>
+                    <input type="text" id="deductionEmployeeId" required>
+                    <label for="deductionType">Deduction Type:</label>
+                    <input type="text" id="deductionType" required>
+                    <label for="deductionAmount">Amount:</label>
+                    <input type="number" id="deductionAmount" required>
+                    <button type="submit">Add Deduction</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Attendance Section -->
+        <section id="attendance">
+            <h2>Attendance</h2>
+            <button class="action-btn" onclick="openModal('addAttendanceModal')">Add Attendance Record</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Attendance ID</th>
+                        <th>Employee ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                    <!-- Attendance rows -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Add Attendance Modal -->
+        <div id="addAttendanceModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addAttendanceModal')">&times;</span>
+                <h3>Add Attendance</h3>
+                <form onsubmit="addAttendance(event)">
+                    <label for="attendanceEmployeeId">Employee ID:</label>
+                    <input type="text" id="attendanceEmployeeId" required>
+                    <label for="attendanceDate">Date:</label>
+                    <input type="date" id="attendanceDate" required>
+                    <label for="attendanceStatus">Status:</label>
+                    <input type="text" id="attendanceStatus" required>
+                    <button type="submit">Add Attendance</button>
+                </form>
+            </div>
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
